@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// MỚI · Checkout Screen
-// Mô phỏng initiatePayment() -> PENDING (theo state diagram "Payment Transaction" ở mục 4).
-// Thực tế: BE tạo Transaction(status=PENDING, user_id, subscription_id=NULL) và redirect
-// sang cổng thanh toán (VNPay). FE chỉ cần điều hướng tới /payment/return?status=...
-const PLAN_PRICE = '99.000₫';
+type PlanKey = 'monthly' | 'yearly';
+
+const PLANS: Record<PlanKey, { label: string; price: string; badge?: string }> = {
+  monthly: { label: 'Premium Plan (1 tháng)', price: '99.000₫' },
+  yearly: { label: 'Premium Plan (1 năm)', price: '999.000₫', badge: 'Tiết kiệm 16%' },
+};
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey>('monthly');
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const plan = PLANS[selectedPlan];
 
   const handlePay = (outcome: 'SUCCESS' | 'FAILED' | 'CANCELLED') => {
     setIsProcessing(true);
-    // Demo: bỏ qua bước redirect cổng thanh toán thật, đi thẳng tới trang return.
     setTimeout(() => {
       navigate(`/payment/return?status=${outcome}`);
     }, 600);
@@ -28,18 +31,56 @@ const CheckoutPage = () => {
         <h1 className="text-2xl font-bold text-gray-900">Upgrade to Premium</h1>
       </div>
 
+      {/* Plan selection */}
+      <div className="space-y-2">
+        {(Object.entries(PLANS) as [PlanKey, (typeof PLANS)[PlanKey]][]).map(([key, p]) => (
+          <button
+            key={key}
+            onClick={() => setSelectedPlan(key)}
+            className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition-colors ${
+              selectedPlan === key
+                ? 'border-indigo-700 bg-indigo-50'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
+                  selectedPlan === key ? 'border-indigo-700' : 'border-gray-300'
+                }`}
+              >
+                {selectedPlan === key && (
+                  <span className="h-2 w-2 rounded-full bg-indigo-700" />
+                )}
+              </span>
+              <div>
+                <p className="text-sm font-medium text-gray-900">{p.label}</p>
+                {p.badge && (
+                  <span className="mt-0.5 inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                    {p.badge}
+                  </span>
+                )}
+              </div>
+            </div>
+            <span className="text-sm font-semibold text-gray-900">{p.price}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Order summary */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex justify-between text-sm text-gray-700">
-          <span>Premium Plan (1 month)</span>
-          <span className="font-semibold">{PLAN_PRICE}</span>
+          <span>{plan.label}</span>
+          <span className="font-semibold">{plan.price}</span>
         </div>
         <hr className="my-3 border-gray-200" />
         <div className="flex justify-between text-sm font-semibold text-gray-900">
-          <span>Total</span>
-          <span>{PLAN_PRICE}</span>
+          <span>Tổng cộng</span>
+          <span>{plan.price}</span>
         </div>
       </div>
 
+      {/* Payment actions */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <p className="text-sm text-gray-700">Thanh toán qua cổng VNPay (mock).</p>
         <p className="mt-1 text-xs text-gray-400">
@@ -54,7 +95,7 @@ const CheckoutPage = () => {
             onClick={() => handlePay('SUCCESS')}
             className="rounded-md bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-800 disabled:opacity-50"
           >
-            {isProcessing ? 'Đang xử lý…' : `Pay ${PLAN_PRICE} (Simulate SUCCESS)`}
+            {isProcessing ? 'Đang xử lý…' : `Pay ${plan.price} (Simulate SUCCESS)`}
           </button>
           <button
             disabled={isProcessing}
