@@ -35,10 +35,9 @@ const Header = () => {
           <NavLink to="/library" className={navLinkClass}>
             Saved Library
           </NavLink>
-          {/* FR-27/28: chỉ hiện cho role = ADMIN */}
           {user.role === Role.ADMIN && (
             <NavLink to="/admin" className={navLinkClass}>
-              Admin
+              Admin Console
             </NavLink>
           )}
         </nav>
