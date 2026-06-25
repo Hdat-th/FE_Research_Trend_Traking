@@ -1,123 +1,274 @@
-import { useMemo, useState } from 'react';
-import AdminBadge from '../../components/admin/AdminBadge';
+import { useState } from 'react';
 import AdminMetricCard from '../../components/admin/AdminMetricCard';
-import AdminModal from '../../components/admin/AdminModal';
 import AdminSectionCard from '../../components/admin/AdminSectionCard';
-import AdminTable from '../../components/admin/AdminTable';
 import AdminToast from '../../components/admin/AdminToast';
-import { exportRequests as seedExportRequests, type ExportRequest } from '../../mock/admin';
+
+const revenueTrend = [
+  { month: 'Jan', value: 8, growth: '+6%' },
+  { month: 'Feb', value: 12, growth: '+9%' },
+  { month: 'Mar', value: 15, growth: '+11%' },
+  { month: 'Apr', value: 18, growth: '+14%' },
+  { month: 'May', value: 22, growth: '+17%' },
+  { month: 'Jun', value: 25, growth: '+20%' },
+];
+
+const publicationTrend = [
+  { month: 'Jan', value: 120, growth: '+8%' },
+  { month: 'Feb', value: 180, growth: '+12%' },
+  { month: 'Mar', value: 250, growth: '+15%' },
+  { month: 'Apr', value: 320, growth: '+18%' },
+  { month: 'May', value: 450, growth: '+22%' },
+  { month: 'Jun', value: 600, growth: '+28%' },
+];
+
+const userOverview = {
+  totalUsers: 1258,
+  premiumUsers: 842,
+  freeUsers: 416,
+  adminUsers: 4,
+};
+
+const formatRevenue = (value: number) => `${value}M₫`;
+
+const formatArticles = (value: number) => value.toLocaleString();
 
 const AdminDashboardPage = () => {
-  const [requests, setRequests] = useState<ExportRequest[]>(seedExportRequests);
-  const [showAll, setShowAll] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<ExportRequest | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-
-  const visibleRequests = showAll ? requests : requests.slice(0, 4);
-  const readyCount = useMemo(() => requests.filter((request) => request.status === 'READY').length, [requests]);
-
-  const createExportRequest = (type: 'CSV' | 'PDF') => {
-    const now = new Date();
-    const nextRequest: ExportRequest = {
-      id: `#EXP-${82920 + requests.length}`,
-      user: 'admin_root',
-      type,
-      timestamp: now.toISOString().slice(0, 16).replace('T', ' '),
-      status: 'GENERATING',
-    };
-
-    setRequests((current) => [nextRequest, ...current]);
-    setToast(`${type} export request has been queued.`);
-
-    window.setTimeout(() => {
-      setRequests((current) => current.map((request) => (request.id === nextRequest.id ? { ...request, status: 'READY' } : request)));
-      setToast(`${type} export is ready to download.`);
-    }, 1200);
-  };
-
-  const downloadReport = (request: ExportRequest) => {
-    if (request.status !== 'READY') {
-      setToast('This report is not ready yet. Please wait until the status becomes READY.');
-      return;
-    }
-
-    const content = `Report ID,User,Type,Timestamp,Status\n${request.id},${request.user},${request.type},${request.timestamp},${request.status}`;
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `${request.id.replace('#', '')}.${request.type.toLowerCase() === 'pdf' ? 'txt' : 'csv'}`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    setToast(`Downloaded ${request.id}.`);
-  };
 
   return (
     <div className="space-y-5">
       <AdminToast message={toast} onClose={() => setToast(null)} />
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">System Workspace: Dashboard Overview</h1>
-          <p className="mt-1 text-xs text-slate-500">Real-time ingestion metrics and governance ledger status.</p>
-        </div>
-        <div className="flex gap-3">
-          <button onClick={() => createExportRequest('CSV')} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">Export CSV</button>
-          <button onClick={() => createExportRequest('PDF')} className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white hover:bg-[#0b3d6f]">Export PDF</button>
-        </div>
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">
+          Admin Dashboard Overview
+        </h1>
+        <p className="mt-1 text-xs text-slate-500">
+          Tổng quan số liệu bài báo, doanh thu và gói đăng ký của hệ thống.
+        </p>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <AdminMetricCard label="Total Articles Fetched" value="842,915" helper="Records from OpenAlex crawl" icon="☁" accent="blue" />
-        <AdminMetricCard label="Data Warehouse Size" value="144,528" helper="Articles normalized in repository" icon="▣" accent="blue" />
-        <AdminMetricCard label="Ready Reports" value={String(readyCount)} helper="Reports available for download" icon="✓" accent="green" />
+      <div className="grid gap-5 lg:grid-cols-4">
+        <AdminMetricCard
+          label="TOTAL ARTICLES"
+          value="144,528"
+          helper="Articles stored in system"
+          icon="📄"
+          accent="blue"
+        />
+
+        <AdminMetricCard
+          label="TOTAL REVENUE"
+          value="24.8M₫"
+          helper="Revenue from subscriptions"
+          icon="₫"
+          accent="green"
+        />
+
+        <AdminMetricCard
+          label="TOTAL USERS"
+          value="1,258"
+          helper="Registered users in system"
+          icon="👥"
+          accent="slate"
+        />
+
+        <AdminMetricCard
+          label="ACTIVE SUBSCRIPTIONS"
+          value="842"
+          helper="Premium Monthly & Yearly"
+          icon="★"
+          accent="orange"
+        />
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <AdminSectionCard
+          title="Publication Trend"
+          subtitle="Number of publications by month"
+        >
+          <div className="p-6">
+            <div className="mb-5 flex items-end justify-between">
+              <div>
+                <p className="text-2xl font-extrabold text-slate-950">
+                  {formatArticles(publicationTrend.reduce((sum, item) => sum + item.value, 0))}
+                </p>
+                <p className="text-xs font-semibold text-slate-500">
+                  Publications in last 6 months
+                </p>
+              </div>
+
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                +28% peak growth
+              </span>
+            </div>
+
+            <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
+              {publicationTrend.map((item) => (
+                <div
+                  key={item.month}
+                  className="group relative flex flex-1 flex-col items-center gap-3"
+                >
+                  <div
+                    className="w-full max-w-[76px] rounded-t-xl bg-[#160078] transition hover:opacity-80"
+                    style={{ height: `${Math.min(item.value / 4, 220)}px` }}
+                  />
+
+                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
+                    <p className="font-bold">{item.month}</p>
+                    <p>{formatArticles(item.value)} publications</p>
+                    <p className="text-emerald-300">{item.growth} vs previous month</p>
+                  </div>
+
+                  <span className="text-xs font-semibold text-slate-500">
+                    {item.month}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AdminSectionCard>
+
+        <AdminSectionCard
+          title="Revenue Trend"
+          subtitle="Revenue generated by subscription plans"
+        >
+          <div className="p-6">
+            <div className="mb-5 flex items-end justify-between">
+              <div>
+                <p className="text-2xl font-extrabold text-slate-950">
+                  {formatRevenue(revenueTrend.reduce((sum, item) => sum + item.value, 0))}
+                </p>
+                <p className="text-xs font-semibold text-slate-500">
+                  Revenue in last 6 months
+                </p>
+              </div>
+
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                +20% peak growth
+              </span>
+            </div>
+
+            <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
+              {revenueTrend.map((item) => (
+                <div
+                  key={item.month}
+                  className="group relative flex flex-1 flex-col items-center gap-3"
+                >
+                  <div
+                    className="w-full max-w-[76px] rounded-t-xl bg-emerald-500 transition hover:opacity-80"
+                    style={{ height: `${Math.min(item.value * 7, 220)}px` }}
+                  />
+
+                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
+                    <p className="font-bold">{item.month}</p>
+                    <p>{formatRevenue(item.value)} revenue</p>
+                    <p className="text-emerald-300">{item.growth} vs previous month</p>
+                  </div>
+
+                  <span className="text-xs font-semibold text-slate-500">
+                    {item.month}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AdminSectionCard>
       </div>
 
       <AdminSectionCard
-        title="Recent Export Requests"
-        action={<button onClick={() => setShowAll((value) => !value)} className="text-xs font-bold text-[#0b6fb8] hover:underline">{showAll ? 'Show Less' : 'View All'}</button>}
+        title="User Overview"
+        subtitle="User account distribution by access level"
       >
-        <AdminTable headers={['Report ID', 'User', 'Type', 'Timestamp', 'Status', 'Actions']}>
-          {visibleRequests.map((request) => (
-            <tr key={request.id} className="hover:bg-slate-50">
-              <td className="px-5 py-4 font-bold text-slate-700">{request.id}</td>
-              <td className="px-5 py-4">{request.user}</td>
-              <td className="px-5 py-4 font-semibold">{request.type}</td>
-              <td className="px-5 py-4">{request.timestamp}</td>
-              <td className="px-5 py-4"><AdminBadge status={request.status} /></td>
-              <td className="px-5 py-4">
-                <div className="flex gap-2">
-                  <button onClick={() => setSelectedRequest(request)} className="text-xs font-bold text-[#0b6fb8] hover:underline">Detail</button>
-                  <button onClick={() => downloadReport(request)} className="text-xs font-bold text-slate-700 hover:text-[#062b4f]">Download</button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </AdminTable>
+        <div className="grid gap-6 p-6 md:grid-cols-[220px_1fr]">
+          <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-[conic-gradient(#160078_0_67%,#10b981_67%_99%,#fb923c_99%_100%)]">
+            <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner">
+              <span className="text-2xl font-extrabold text-slate-950">
+                {userOverview.totalUsers.toLocaleString()}
+              </span>
+              <span className="text-xs font-semibold text-slate-500">
+                Total Users
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+              <span className="font-semibold text-slate-700">Total Users</span>
+              <span className="font-extrabold text-slate-950">
+                {userOverview.totalUsers.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-slate-700">
+                <span className="h-3 w-3 rounded-full bg-[#160078]" />
+                Premium
+              </span>
+              <span className="font-extrabold text-slate-950">
+                {userOverview.premiumUsers.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-slate-700">
+                <span className="h-3 w-3 rounded-full bg-emerald-500" />
+                Free
+              </span>
+              <span className="font-extrabold text-slate-950">
+                {userOverview.freeUsers.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-slate-700">
+                <span className="h-3 w-3 rounded-full bg-orange-400" />
+                Admin
+              </span>
+              <span className="font-extrabold text-slate-950">
+                {userOverview.adminUsers}
+              </span>
+            </div>
+          </div>
+        </div>
       </AdminSectionCard>
 
-      <AdminModal
-        open={Boolean(selectedRequest)}
-        title="Export Request Detail"
-        subtitle="Mock report lifecycle following Requested → Generating → Ready / Failed."
-        onClose={() => setSelectedRequest(null)}
-        footer={
-          <>
-            <button onClick={() => setSelectedRequest(null)} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close</button>
-            {selectedRequest && <button onClick={() => downloadReport(selectedRequest)} className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white">Download</button>}
-          </>
-        }
+      <AdminSectionCard
+        title="Subscription Distribution"
+        subtitle="Current subscription plan allocation"
       >
-        {selectedRequest && (
-          <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-            <p><span className="font-bold">Report ID:</span> {selectedRequest.id}</p>
-            <p><span className="font-bold">User:</span> {selectedRequest.user}</p>
-            <p><span className="font-bold">Type:</span> {selectedRequest.type}</p>
-            <p><span className="font-bold">Timestamp:</span> {selectedRequest.timestamp}</p>
-            <p className="sm:col-span-2"><span className="font-bold">Status:</span> <AdminBadge status={selectedRequest.status} /></p>
+        <div className="space-y-5 p-6">
+          <div>
+            <div className="mb-2 flex justify-between text-sm font-semibold">
+              <span>Premium Monthly</span>
+              <span>70%</span>
+            </div>
+            <div className="h-3 rounded-full bg-slate-100">
+              <div className="h-3 rounded-full bg-[#160078]" style={{ width: '70%' }} />
+            </div>
           </div>
-        )}
-      </AdminModal>
+
+          <div>
+            <div className="mb-2 flex justify-between text-sm font-semibold">
+              <span>Premium Yearly</span>
+              <span>20%</span>
+            </div>
+            <div className="h-3 rounded-full bg-slate-100">
+              <div className="h-3 rounded-full bg-emerald-500" style={{ width: '20%' }} />
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 flex justify-between text-sm font-semibold">
+              <span>Free Users</span>
+              <span>10%</span>
+            </div>
+            <div className="h-3 rounded-full bg-slate-100">
+              <div className="h-3 rounded-full bg-orange-400" style={{ width: '10%' }} />
+            </div>
+          </div>
+        </div>
+      </AdminSectionCard>
     </div>
   );
 };

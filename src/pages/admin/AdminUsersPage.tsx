@@ -5,7 +5,7 @@ import AdminModal from '../../components/admin/AdminModal';
 import AdminSectionCard from '../../components/admin/AdminSectionCard';
 import AdminTable from '../../components/admin/AdminTable';
 import AdminToast from '../../components/admin/AdminToast';
-import { activityLogs as seedActivityLogs, adminUsers as seedAdminUsers, type ActivityLog, type UserDirectoryRow } from '../../mock/admin';
+import { adminUsers as seedAdminUsers, type UserDirectoryRow } from '../../mock/admin';
 
 const roleOptions = ['Admin Overseer', 'Researcher (Nhà nghiên cứu)', 'Lecturer (Giảng viên)', 'Student (Sinh viên)', 'Regular User'];
 
@@ -18,7 +18,6 @@ const logTone = {
 
 const AdminUsersPage = () => {
   const [users, setUsers] = useState<UserDirectoryRow[]>(seedAdminUsers);
-  const [logs, setLogs] = useState<ActivityLog[]>(seedActivityLogs);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<UserDirectoryRow | null>(null);
@@ -34,33 +33,27 @@ const AdminUsersPage = () => {
   const visibleUsers = filteredUsers.slice((page - 1) * pageSize, page * pageSize);
   const activeUsers = users.filter((user) => user.status === 'ACTIVE').length;
   const pendingUsers = users.filter((user) => user.status === 'REGISTERED').length;
+  const totalUsers = users.length;
 
-  const addLog = (log: ActivityLog) => {
-    setLogs((current) => [log, ...current].slice(0, 6));
-  };
 
   const changeRole = (userId: string, role: string) => {
     setUsers((current) => current.map((user) => (user.id === userId ? { ...user, role } : user)));
-    addLog({ type: 'UPDATE', time: 'Just now', title: `${userId} role updated to ${role}`, ref: 'RBAC: local-state' });
     setToast(`${userId} role updated.`);
   };
 
   const toggleUserStatus = (user: UserDirectoryRow) => {
     const nextStatus = user.status === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED';
     setUsers((current) => current.map((item) => (item.id === user.id ? { ...item, status: nextStatus } : item)));
-    addLog({ type: nextStatus === 'SUSPENDED' ? 'AUTH_FAIL' : 'UPDATE', time: 'Just now', title: `${user.id} changed to ${nextStatus}`, ref: 'ADMIN_ACTION' });
     setToast(`${user.name} is now ${nextStatus}.`);
   };
 
   const approveResearcher = (user: UserDirectoryRow) => {
     setUsers((current) => current.map((item) => (item.id === user.id ? { ...item, role: 'Researcher (Nhà nghiên cứu)', status: 'ACTIVE' } : item)));
-    addLog({ type: 'ELEVATION', time: 'Just now', title: `${user.id} approved as Researcher`, ref: 'APPROVED' });
     setToast(`${user.name} approved as Researcher.`);
   };
 
   const denyResearcher = (user: UserDirectoryRow) => {
     setUsers((current) => current.map((item) => (item.id === user.id ? { ...item, status: 'SUSPENDED' } : item)));
-    addLog({ type: 'AUTH_FAIL', time: 'Just now', title: `${user.id} role request denied`, ref: 'DENIED' });
     setToast(`${user.name} request denied.`);
   };
 
@@ -92,7 +85,6 @@ const AdminUsersPage = () => {
     setNewUserEmail('');
     setNewUserRole(roleOptions[3]);
     setShowProvisionModal(false);
-    addLog({ type: 'UPDATE', time: 'Just now', title: `${nextUser.id} provisioned by admin`, ref: 'PROVISION' });
     setToast(`${nextUser.name} has been provisioned.`);
   };
 
@@ -118,19 +110,39 @@ const AdminUsersPage = () => {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <AdminMetricCard label="Total Active Users" value={String(activeUsers)} helper="Local demo active accounts" icon="♙" accent="blue" />
-        <AdminMetricCard label="Role Requests Pending" value={String(pendingUsers)} helper="Registered users awaiting review" icon="▣" accent="orange" />
-        <AdminMetricCard label="System Integrity Score" value="99.98%" helper="Status: High Resilience" icon="🛡" accent="green" />
+        <AdminMetricCard
+          label="Total Users"
+          value={String(totalUsers)}
+          helper="All registered user accounts"
+          icon="👥"
+          accent="blue"
+        />
+
+        <AdminMetricCard
+          label="Active Users"
+          value={String(activeUsers)}
+          helper="Accounts currently active"
+          icon="✓"
+          accent="green"
+        />
+
+        <AdminMetricCard
+          label="Pending Role Requests"
+          value={String(pendingUsers)}
+          helper="Registered users awaiting review"
+          icon="▣"
+          accent="orange"
+        />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_285px]">
+      <div className="space-y-5">
         <div className="space-y-5">
           <AdminSectionCard
             title="Access Control List"
             action={
               <div className="flex items-center gap-3">
                 <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search user..." className="rounded-md border border-slate-200 px-3 py-2 text-xs outline-none focus:border-[#0b6fb8]" />
-                <button onClick={() => setShowProvisionModal(true)} className="rounded-md bg-[#0b6fb8] px-4 py-2 text-xs font-bold text-white">+ Provision User</button>
+                <button onClick={() => setShowProvisionModal(true)} className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">+ Provision User</button>
               </div>
             }
           >
@@ -178,22 +190,6 @@ const AdminUsersPage = () => {
             </div>
           </AdminSectionCard>
         </div>
-
-        <AdminSectionCard title="System Activity Logs" action={<button onClick={() => setToast('Audit trail refreshed.')} className="text-sm text-slate-500">↻</button>}>
-          <div className="space-y-3 p-4">
-            {logs.map((log, index) => (
-              <div key={`${log.type}-${log.time}-${index}`} className={`rounded border-l-4 p-3 ${logTone[log.type]}`}>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[9px] font-extrabold">{log.type}</span>
-                  <span className="text-[10px] text-slate-500">{log.time}</span>
-                </div>
-                <p className="mt-2 text-xs font-bold text-slate-800">{log.title}</p>
-                <p className="mt-2 text-[10px] text-slate-500">{log.ref}</p>
-              </div>
-            ))}
-            <button onClick={() => setToast('Global audit trail opened in demo mode.')} className="w-full rounded border border-[#0b6fb8] py-2 text-xs font-bold text-[#0b6fb8] hover:bg-blue-50">View Global Audit Trail</button>
-          </div>
-        </AdminSectionCard>
       </div>
 
       <AdminModal
@@ -204,7 +200,7 @@ const AdminUsersPage = () => {
         footer={
           <>
             <button onClick={() => setShowProvisionModal(false)} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Cancel</button>
-            <button onClick={provisionUser} className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white">Create User</button>
+            <button onClick={provisionUser} className="rounded-md bg-[#4338ca]b hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">Create User</button>
           </>
         }
       >

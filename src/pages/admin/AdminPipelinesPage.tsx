@@ -76,7 +76,7 @@ const AdminPipelinesPage = () => {
         </div>
         <div className="flex gap-3">
           <button onClick={() => setShowExportModal(true)} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">⇩ Export</button>
-          <button onClick={() => runSync('OpenAlex Ingest')} disabled={isSyncing} className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white hover:bg-[#0b3d6f] disabled:cursor-not-allowed disabled:opacity-60">{isSyncing ? 'Syncing...' : '↥ Ingest Now'}</button>
+          <button onClick={() => runSync('OpenAlex Ingest')} disabled={isSyncing} className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white hover:bg-[#0b3d6f] disabled:cursor-not-allowed disabled:opacity-60">{isSyncing ? 'Syncing...' : '↥ Ingest Now'}</button>
         </div>
       </div>
 
@@ -132,7 +132,7 @@ const AdminPipelinesPage = () => {
             <label className="block text-xs font-bold text-slate-700" htmlFor="openalex-key">OpenAlex API Key</label>
             <input id="openalex-key" type="password" value={apiKey} onChange={(event) => setApiKey(event.target.value)} className="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700" />
             <p className="text-xs text-slate-500">Your key is encrypted and used only for authenticated requests to OpenAlex.</p>
-            <button onClick={saveKey} className="w-full rounded-md bg-[#0b6fb8] px-4 py-2 text-sm font-bold text-white hover:bg-[#095d9d]">Save Key</button>
+            <button onClick={saveKey} className="w-full rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-sm font-bold text-white hover:bg-[#095d9d]">Save Key</button>
           </div>
         </AdminSectionCard>
       </div>
