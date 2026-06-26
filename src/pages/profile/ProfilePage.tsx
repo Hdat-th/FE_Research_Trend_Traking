@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { AccessTier } from '../../types/auth';
+import { AccessTier, Role } from '../../types/auth';
 import { getRoleLabel } from '../../lib/role';
 
 // S-04 · Profile & Settings (FR-05) + Subscription section (BR-26..29, mới)
@@ -164,7 +164,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Subscription - phản ánh access_tier, độc lập với role (mục 1, hệ quả #2) */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        {user.role !== Role.ADMIN && <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-800">Subscription</h3>
 
           <div className="mt-3 flex items-center justify-between">
@@ -198,7 +198,7 @@ const ProfilePage = () => {
               </button>
             )}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
