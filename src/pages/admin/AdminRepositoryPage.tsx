@@ -119,16 +119,14 @@ const AdminRepositoryPage = () => {
         <div className="flex gap-8 text-sm font-bold text-slate-500">
           <button
             onClick={() => setActiveTab('papers')}
-            className={`pb-3 hover:text-[#0b6fb8] ${activeTab === 'papers' ? 'border-b-2 border-[#0b6fb8] text-[#062b4f]' : ''
-              }`}
+            className={`pb-3 hover:text-[#0b6fb8] ${activeTab === 'papers' ? 'border-b-2 border-[#0b6fb8] text-[#062b4f]' : ''}`}
           >
             Research Papers
           </button>
 
           <button
             onClick={() => setActiveTab('keywords')}
-            className={`pb-3 hover:text-[#0b6fb8] ${activeTab === 'keywords' ? 'border-b-2 border-[#0b6fb8] text-[#062b4f]' : ''
-              }`}
+            className={`pb-3 hover:text-[#0b6fb8] ${activeTab === 'keywords' ? 'border-b-2 border-[#0b6fb8] text-[#062b4f]' : ''}`}
           >
             Keywords
           </button>
@@ -151,31 +149,19 @@ const AdminRepositoryPage = () => {
           <AdminTable headers={['Paper ID', 'Title', 'Authors', 'Journal', 'Year', 'Citations', 'DOI']}>
             {filteredPapers.map((paper) => (
               <tr key={paper.id} className="hover:bg-slate-50">
-                <td className="px-5 py-4 font-bold text-slate-700">
-                  {paper.id}
-                </td>
+                <td className="px-5 py-4 font-bold text-slate-700">{paper.id}</td>
 
                 <td className="max-w-sm px-5 py-4">
-                  <p className="font-semibold text-slate-900">
-                    {paper.title}
-                  </p>
+                  <p className="font-semibold text-slate-900">{paper.title}</p>
                 </td>
 
-                <td className="px-5 py-4 text-sm text-slate-600">
-                  {paper.authors}
-                </td>
+                <td className="px-5 py-4 text-sm text-slate-600">{paper.authors}</td>
 
-                <td className="px-5 py-4 text-slate-600">
-                  {paper.journal}
-                </td>
+                <td className="px-5 py-4 text-slate-600">{paper.journal}</td>
 
-                <td className="px-5 py-4 font-semibold text-slate-700">
-                  {paper.year}
-                </td>
+                <td className="px-5 py-4 font-semibold text-slate-700">{paper.year}</td>
 
-                <td className="px-5 py-4 font-bold text-slate-900">
-                  {paper.citations}
-                </td>
+                <td className="px-5 py-4 font-bold text-slate-900">{paper.citations}</td>
 
                 <td className="px-5 py-4">
                   <a

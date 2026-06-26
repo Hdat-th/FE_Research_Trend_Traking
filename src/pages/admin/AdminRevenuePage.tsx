@@ -139,7 +139,7 @@ const AdminRevenuePage = () => {
 
           <button
             onClick={refreshPayments}
-            className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white hover:bg-[#0b3d6f]"
+            className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white"
           >
             Refresh Payments
           </button>
@@ -188,9 +188,7 @@ const AdminRevenuePage = () => {
                 <p className="text-2xl font-extrabold text-slate-950">
                   {revenueBars.reduce((sum, item) => sum + item.amount, 0)}M₫
                 </p>
-                <p className="text-xs font-semibold text-slate-500">
-                  Revenue in last 6 months
-                </p>
+                <p className="text-xs font-semibold text-slate-500">Revenue in last 6 months</p>
               </div>
 
               <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
@@ -200,10 +198,7 @@ const AdminRevenuePage = () => {
 
             <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
               {revenueBars.map((item) => (
-                <div
-                  key={item.month}
-                  className="group relative flex flex-1 flex-col items-center gap-3"
-                >
+                <div key={item.month} className="group relative flex flex-1 flex-col items-center gap-3">
                   <div
                     className="w-full max-w-[76px] rounded-t-xl bg-[#0b6fb8] transition hover:bg-[#062b4f]"
                     style={{ height: `${(item.amount / maxBar) * 210}px` }}
@@ -222,23 +217,17 @@ const AdminRevenuePage = () => {
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <div className="rounded-md border border-slate-200 bg-white p-4">
                 <p className="text-xs font-bold text-slate-500">Monthly Revenue</p>
-                <p className="mt-1 text-lg font-extrabold text-slate-950">
-                  {monthlyRevenue}M₫
-                </p>
+                <p className="mt-1 text-lg font-extrabold text-slate-950">{monthlyRevenue}M₫</p>
               </div>
 
               <div className="rounded-md border border-slate-200 bg-white p-4">
                 <p className="text-xs font-bold text-slate-500">Active Premium</p>
-                <p className="mt-1 text-lg font-extrabold text-emerald-700">
-                  {activePremium}
-                </p>
+                <p className="mt-1 text-lg font-extrabold text-emerald-700">{activePremium}</p>
               </div>
 
               <div className="rounded-md border border-slate-200 bg-white p-4">
                 <p className="text-xs font-bold text-slate-500">Renewal Rate</p>
-                <p className="mt-1 text-lg font-extrabold text-[#0b6fb8]">
-                  {renewalRate}%
-                </p>
+                <p className="mt-1 text-lg font-extrabold text-[#0b6fb8]">{renewalRate}%</p>
               </div>
             </div>
           </div>
@@ -251,11 +240,8 @@ const AdminRevenuePage = () => {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-extrabold text-slate-900">{plan.name}</p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {plan.price} · {plan.duration}
-                    </p>
+                    <p className="mt-1 text-xs text-slate-500">{plan.price} · {plan.duration}</p>
                   </div>
-
                   <AdminBadge status={plan.status} />
                 </div>
 
@@ -292,9 +278,7 @@ const AdminRevenuePage = () => {
         action={
           <select
             value={statusFilter}
-            onChange={(event) =>
-              setStatusFilter(event.target.value as 'ALL' | RevenueRow['status'])
-            }
+            onChange={(event) => setStatusFilter(event.target.value as 'ALL' | RevenueRow['status'])}
             className="rounded-md border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600"
           >
             <option value="ALL">All Status</option>
@@ -305,17 +289,7 @@ const AdminRevenuePage = () => {
         }
       >
         <AdminTable
-          headers={[
-            'Invoice ID',
-            'Transaction ID',
-            'Customer',
-            'Plan',
-            'Amount',
-            'Method',
-            'Paid At',
-            'Status',
-            'Actions',
-          ]}
+          headers={['Invoice ID', 'Transaction ID', 'Customer', 'Plan', 'Amount', 'Method', 'Paid At', 'Status', 'Actions']}
         >
           {filteredRows.map((row) => (
             <tr key={row.invoiceId} className="hover:bg-slate-50">
@@ -326,14 +300,9 @@ const AdminRevenuePage = () => {
               <td className="px-5 py-4 font-bold text-slate-950">{row.amount}</td>
               <td className="px-5 py-4">{row.method}</td>
               <td className="px-5 py-4">{row.paidAt}</td>
+              <td className="px-5 py-4"><AdminBadge status={row.status} /></td>
               <td className="px-5 py-4">
-                <AdminBadge status={row.status} />
-              </td>
-              <td className="px-5 py-4">
-                <button
-                  onClick={() => setSelectedRow(row)}
-                  className="text-xs font-bold text-[#0b6fb8] hover:underline"
-                >
+                <button onClick={() => setSelectedRow(row)} className="text-xs font-bold text-[#0b6fb8] hover:underline">
                   Detail
                 </button>
               </td>
@@ -350,30 +319,14 @@ const AdminRevenuePage = () => {
       >
         {selectedRow && (
           <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-            <p>
-              <span className="font-bold">Invoice:</span> {selectedRow.invoiceId}
-            </p>
-            <p>
-              <span className="font-bold">Transaction ID:</span> {selectedRow.transactionId}
-            </p>
-            <p>
-              <span className="font-bold">Customer:</span> {selectedRow.customer}
-            </p>
-            <p>
-              <span className="font-bold">Plan:</span> {selectedRow.plan}
-            </p>
-            <p>
-              <span className="font-bold">Amount:</span> {selectedRow.amount}
-            </p>
-            <p>
-              <span className="font-bold">Method:</span> {selectedRow.method}
-            </p>
-            <p>
-              <span className="font-bold">Paid At:</span> {selectedRow.paidAt}
-            </p>
-            <p className="sm:col-span-2">
-              <span className="font-bold">Status:</span> <AdminBadge status={selectedRow.status} />
-            </p>
+            <p><span className="font-bold">Invoice:</span> {selectedRow.invoiceId}</p>
+            <p><span className="font-bold">Transaction ID:</span> {selectedRow.transactionId}</p>
+            <p><span className="font-bold">Customer:</span> {selectedRow.customer}</p>
+            <p><span className="font-bold">Plan:</span> {selectedRow.plan}</p>
+            <p><span className="font-bold">Amount:</span> {selectedRow.amount}</p>
+            <p><span className="font-bold">Method:</span> {selectedRow.method}</p>
+            <p><span className="font-bold">Paid At:</span> {selectedRow.paidAt}</p>
+            <p className="sm:col-span-2"><span className="font-bold">Status:</span> <AdminBadge status={selectedRow.status} /></p>
           </div>
         )}
       </AdminModal>
@@ -385,26 +338,14 @@ const AdminRevenuePage = () => {
         onClose={() => setEditingPlan(null)}
         footer={
           <>
-            <button
-              onClick={() => setEditingPlan(null)}
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700"
-            >
-              Cancel
-            </button>
-
-            <button
-              onClick={savePlan}
-              className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white"
-            >
-              Save Plan
-            </button>
+            <button onClick={() => setEditingPlan(null)} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Cancel</button>
+            <button onClick={savePlan} className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white">Save Plan</button>
           </>
         }
       >
         {editingPlan && (
           <div className="space-y-4">
             <p className="text-sm font-bold text-slate-800">{editingPlan.name}</p>
-
             <input
               value={planPrice}
               onChange={(event) => setPlanPrice(event.target.value)}
