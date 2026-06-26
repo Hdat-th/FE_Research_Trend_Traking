@@ -9,13 +9,6 @@ import { adminUsers as seedAdminUsers, type UserDirectoryRow } from '../../mock/
 
 const roleOptions = ['Admin Overseer', 'Researcher (Nhà nghiên cứu)', 'Lecturer (Giảng viên)', 'Student (Sinh viên)', 'Regular User'];
 
-const logTone = {
-  ELEVATION: 'border-blue-400 bg-blue-50 text-blue-700',
-  LEDGER: 'border-slate-300 bg-slate-50 text-slate-700',
-  AUTH_FAIL: 'border-red-400 bg-red-50 text-red-700',
-  UPDATE: 'border-sky-400 bg-sky-50 text-sky-700',
-};
-
 const AdminUsersPage = () => {
   const [users, setUsers] = useState<UserDirectoryRow[]>(seedAdminUsers);
   const [query, setQuery] = useState('');
@@ -34,7 +27,6 @@ const AdminUsersPage = () => {
   const activeUsers = users.filter((user) => user.status === 'ACTIVE').length;
   const pendingUsers = users.filter((user) => user.status === 'REGISTERED').length;
   const totalUsers = users.length;
-
 
   const changeRole = (userId: string, role: string) => {
     setUsers((current) => current.map((user) => (user.id === userId ? { ...user, role } : user)));
@@ -136,60 +128,58 @@ const AdminUsersPage = () => {
       </div>
 
       <div className="space-y-5">
-        <div className="space-y-5">
-          <AdminSectionCard
-            title="Access Control List"
-            action={
-              <div className="flex items-center gap-3">
-                <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search user..." className="rounded-md border border-slate-200 px-3 py-2 text-xs outline-none focus:border-[#0b6fb8]" />
-                <button onClick={() => setShowProvisionModal(true)} className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">+ Provision User</button>
-              </div>
-            }
-          >
-            <AdminTable headers={['User ID', 'Entity Full Name', 'Registered Email Node', 'Role Authorization', 'Status', 'Actions']}>
-              {visibleUsers.map((directoryUser) => (
-                <tr key={directoryUser.id} className="hover:bg-slate-50">
-                  <td className="px-5 py-4 font-bold text-slate-700">{directoryUser.id}</td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-600">{directoryUser.initials}</span>
-                      <span className="font-bold text-slate-900">{directoryUser.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4 text-slate-500">{directoryUser.email}</td>
-                  <td className="px-5 py-4">
-                    <select value={directoryUser.role} onChange={(event) => changeRole(directoryUser.id, event.target.value)} className="rounded border border-slate-200 bg-white px-2 py-1 text-xs">
-                      {roleOptions.map((role) => <option key={role}>{role}</option>)}
-                    </select>
-                  </td>
-                  <td className="px-5 py-4"><AdminBadge status={directoryUser.status} /></td>
-                  <td className="px-5 py-4">
-                    <div className="flex flex-wrap gap-2 text-xs font-bold">
-                      <button onClick={() => setSelectedUser(directoryUser)} className="text-[#0b6fb8] hover:underline">View</button>
-                      <button onClick={() => toggleUserStatus(directoryUser)} className="text-orange-700 hover:underline">{directoryUser.status === 'SUSPENDED' ? 'Activate' : 'Suspend'}</button>
-                      {directoryUser.status === 'REGISTERED' && <button onClick={() => approveResearcher(directoryUser)} className="text-emerald-700 hover:underline">Approve</button>}
-                    </div>
-                  </td>
-                </tr>
+        <AdminSectionCard
+          title="Access Control List"
+          action={
+            <div className="flex items-center gap-3">
+              <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search user..." className="rounded-md border border-slate-200 px-3 py-2 text-xs outline-none focus:border-[#0b6fb8]" />
+              <button onClick={() => setShowProvisionModal(true)} className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">+ Provision User</button>
+            </div>
+          }
+        >
+          <AdminTable headers={['User ID', 'Entity Full Name', 'Registered Email Node', 'Role Authorization', 'Status', 'Actions']}>
+            {visibleUsers.map((directoryUser) => (
+              <tr key={directoryUser.id} className="hover:bg-slate-50">
+                <td className="px-5 py-4 font-bold text-slate-700">{directoryUser.id}</td>
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-600">{directoryUser.initials}</span>
+                    <span className="font-bold text-slate-900">{directoryUser.name}</span>
+                  </div>
+                </td>
+                <td className="px-5 py-4 text-slate-500">{directoryUser.email}</td>
+                <td className="px-5 py-4">
+                  <select value={directoryUser.role} onChange={(event) => changeRole(directoryUser.id, event.target.value)} className="rounded border border-slate-200 bg-white px-2 py-1 text-xs">
+                    {roleOptions.map((role) => <option key={role}>{role}</option>)}
+                  </select>
+                </td>
+                <td className="px-5 py-4"><AdminBadge status={directoryUser.status} /></td>
+                <td className="px-5 py-4">
+                  <div className="flex flex-wrap gap-2 text-xs font-bold">
+                    <button onClick={() => setSelectedUser(directoryUser)} className="text-[#0b6fb8] hover:underline">View</button>
+                    <button onClick={() => toggleUserStatus(directoryUser)} className="text-orange-700 hover:underline">{directoryUser.status === 'SUSPENDED' ? 'Activate' : 'Suspend'}</button>
+                    {directoryUser.status === 'REGISTERED' && <button onClick={() => approveResearcher(directoryUser)} className="text-emerald-700 hover:underline">Approve</button>}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </AdminTable>
+          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
+            <span>Displaying {visibleUsers.length} of {filteredUsers.length} user entries</span>
+            <div className="flex gap-1">
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                <button key={pageNumber} onClick={() => setPage(pageNumber)} className={`h-7 w-7 rounded border text-xs font-bold ${pageNumber === page ? 'bg-[#062b4f] text-white' : 'border-slate-200 bg-white text-slate-600'}`}>{pageNumber}</button>
               ))}
-            </AdminTable>
-            <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
-              <span>Displaying {visibleUsers.length} of {filteredUsers.length} user entries</span>
-              <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                  <button key={pageNumber} onClick={() => setPage(pageNumber)} className={`h-7 w-7 rounded border text-xs font-bold ${pageNumber === page ? 'bg-[#062b4f] text-white' : 'border-slate-200 bg-white text-slate-600'}`}>{pageNumber}</button>
-                ))}
-              </div>
             </div>
-          </AdminSectionCard>
+          </div>
+        </AdminSectionCard>
 
-          <AdminSectionCard title="Compliance Status">
-            <div className="p-5">
-              <p className="text-sm text-slate-600">The current RBAC configuration matches the institutional policy 2024-B. No unauthorized role elevations detected in the last 24 hours.</p>
-              <button onClick={downloadComplianceReport} className="mt-3 text-xs font-bold text-[#0b6fb8]">Download Compliance Report →</button>
-            </div>
-          </AdminSectionCard>
-        </div>
+        <AdminSectionCard title="Compliance Status">
+          <div className="p-5">
+            <p className="text-sm text-slate-600">The current RBAC configuration matches the institutional policy 2024-B. No unauthorized role elevations detected in the last 24 hours.</p>
+            <button onClick={downloadComplianceReport} className="mt-3 text-xs font-bold text-[#0b6fb8]">Download Compliance Report →</button>
+          </div>
+        </AdminSectionCard>
       </div>
 
       <AdminModal
@@ -200,7 +190,7 @@ const AdminUsersPage = () => {
         footer={
           <>
             <button onClick={() => setShowProvisionModal(false)} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Cancel</button>
-            <button onClick={provisionUser} className="rounded-md bg-[#4338ca]b hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">Create User</button>
+            <button onClick={provisionUser} className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white">Create User</button>
           </>
         }
       >

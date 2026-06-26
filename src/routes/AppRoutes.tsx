@@ -56,6 +56,7 @@ const AppRoutes = () => {
           <Route path="/payment/return" element={<PaymentReturnPage />} />
         </Route>
 
+        {/* FR-27/28: khu vực quản trị - AdminLayout tự kiểm tra role ADMIN */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="pipelines" element={<AdminPipelinesPage />} />
