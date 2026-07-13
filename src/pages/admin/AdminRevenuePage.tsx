@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import AdminBadge from '../../components/admin/AdminBadge';
 import AdminMetricCard from '../../components/admin/AdminMetricCard';
 import AdminModal from '../../components/admin/AdminModal';
@@ -6,19 +6,13 @@ import AdminSectionCard from '../../components/admin/AdminSectionCard';
 import AdminTable from '../../components/admin/AdminTable';
 import AdminToast from '../../components/admin/AdminToast';
 import {
-  revenueBars as seedRevenueBars,
   revenueRows as seedRevenueRows,
   subscriptionPlans as seedPlans,
   type RevenueRow,
   type SubscriptionPlan,
 } from '../../mock/admin';
 
-const parseVnd = (value: string) => Number(value.replace(/[^0-9]/g, '')) || 0;
-
-const formatMillion = (value: number) => `${Math.round(value / 100000) / 10}M₫`;
-
 const AdminRevenuePage = () => {
-  const [revenueBars, setRevenueBars] = useState(seedRevenueBars);
   const [rows, setRows] = useState<RevenueRow[]>(seedRevenueRows);
   const [plans, setPlans] = useState<SubscriptionPlan[]>(seedPlans);
   const [statusFilter, setStatusFilter] = useState<'ALL' | RevenueRow['status']>('ALL');
@@ -27,19 +21,13 @@ const AdminRevenuePage = () => {
   const [planPrice, setPlanPrice] = useState('');
   const [toast, setToast] = useState<string | null>(null);
 
-  const maxBar = Math.max(...revenueBars.map((item) => item.amount));
-  const filteredRows = statusFilter === 'ALL' ? rows : rows.filter((row) => row.status === statusFilter);
-
-  const totalRevenue = useMemo(
-    () => rows.filter((row) => row.status === 'SUCCESS').reduce((sum, row) => sum + parseVnd(row.amount), 0),
-    [rows],
-  );
+  const filteredRows =
+    statusFilter === 'ALL' ? rows : rows.filter((row) => row.status === statusFilter);
 
   const totalSubscriptions = rows.length;
-  const monthlyRevenue = revenueBars[revenueBars.length - 1]?.amount ?? 0;
+  const successPayments = rows.filter((row) => row.status === 'SUCCESS').length;
   const pendingPayments = rows.filter((row) => row.status === 'PENDING').length;
-  const activePremium = 842;
-  const renewalRate = 81;
+  const failedPayments = rows.filter((row) => row.status === 'FAILED').length;
 
   const exportFinanceReport = () => {
     const content = rows
@@ -78,12 +66,6 @@ const AdminRevenuePage = () => {
     };
 
     setRows((current) => [nextInvoice, ...current]);
-    setRevenueBars((current) =>
-      current.map((item, index) =>
-        index === current.length - 1 ? { ...item, amount: item.amount + 3 } : item,
-      ),
-    );
-
     setToast('Payments refreshed. New payment callback received as PENDING.');
 
     window.setTimeout(() => {
@@ -139,7 +121,7 @@ const AdminRevenuePage = () => {
 
           <button
             onClick={refreshPayments}
-            className="rounded-md bg-[#4338ca] hover:bg-[#3730a3] px-4 py-2 text-xs font-bold text-white hover:bg-[#0b3d6f]"
+            className="rounded-md bg-[#4338ca] px-4 py-2 text-xs font-bold text-white hover:bg-[#3730a3]"
           >
             Refresh Payments
           </button>
@@ -147,14 +129,6 @@ const AdminRevenuePage = () => {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-4">
-        <AdminMetricCard
-          label="Total Revenue"
-          value={formatMillion(totalRevenue)}
-          helper="Confirmed successful payments"
-          icon="₫"
-          accent="green"
-        />
-
         <AdminMetricCard
           label="Total Subscriptions"
           value={String(totalSubscriptions)}
@@ -164,11 +138,11 @@ const AdminRevenuePage = () => {
         />
 
         <AdminMetricCard
-          label="Monthly Revenue"
-          value={`${monthlyRevenue}M₫`}
-          helper="Revenue in current month"
+          label="Success Payments"
+          value={String(successPayments)}
+          helper="Confirmed successful payments"
           icon="✓"
-          accent="blue"
+          accent="green"
         />
 
         <AdminMetricCard
@@ -178,70 +152,73 @@ const AdminRevenuePage = () => {
           icon="!"
           accent="slate"
         />
+
+        <AdminMetricCard
+          label="Failed Payments"
+          value={String(failedPayments)}
+          helper="Payment failed or rejected"
+          icon="×"
+          accent="red"
+        />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
-        <AdminSectionCard title="Revenue Trend" subtitle="Gross successful payments by month">
-          <div className="p-5">
-            <div className="mb-5 flex items-end justify-between">
-              <div>
-                <p className="text-2xl font-extrabold text-slate-950">
-                  {revenueBars.reduce((sum, item) => sum + item.amount, 0)}M₫
-                </p>
-                <p className="text-xs font-semibold text-slate-500">
-                  Revenue in last 6 months
-                </p>
-              </div>
-
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                +20% peak growth
-              </span>
-            </div>
-
-            <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
-              {revenueBars.map((item) => (
-                <div
-                  key={item.month}
-                  className="group relative flex flex-1 flex-col items-center gap-3"
-                >
-                  <div
-                    className="w-full max-w-[76px] rounded-t-xl bg-[#0b6fb8] transition hover:bg-[#062b4f]"
-                    style={{ height: `${(item.amount / maxBar) * 210}px` }}
-                  />
-
-                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
-                    <p className="font-bold">{item.month}</p>
-                    <p>{item.amount}M₫ revenue</p>
-                  </div>
-
-                  <span className="text-xs font-bold text-slate-500">{item.month}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-md border border-slate-200 bg-white p-4">
-                <p className="text-xs font-bold text-slate-500">Monthly Revenue</p>
-                <p className="mt-1 text-lg font-extrabold text-slate-950">
-                  {monthlyRevenue}M₫
-                </p>
-              </div>
-
-              <div className="rounded-md border border-slate-200 bg-white p-4">
-                <p className="text-xs font-bold text-slate-500">Active Premium</p>
-                <p className="mt-1 text-lg font-extrabold text-emerald-700">
-                  {activePremium}
-                </p>
-              </div>
-
-              <div className="rounded-md border border-slate-200 bg-white p-4">
-                <p className="text-xs font-bold text-slate-500">Renewal Rate</p>
-                <p className="mt-1 text-lg font-extrabold text-[#0b6fb8]">
-                  {renewalRate}%
-                </p>
-              </div>
-            </div>
-          </div>
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <AdminSectionCard
+          title="Recent Payment Transactions"
+          subtitle="Subscription plan purchases and gateway callbacks"
+          action={
+            <select
+              value={statusFilter}
+              onChange={(event) =>
+                setStatusFilter(event.target.value as 'ALL' | RevenueRow['status'])
+              }
+              className="rounded-md border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600"
+            >
+              <option value="ALL">All Status</option>
+              <option value="SUCCESS">Success</option>
+              <option value="PENDING">Pending</option>
+              <option value="FAILED">Failed</option>
+            </select>
+          }
+        >
+          <AdminTable
+            headers={[
+              'Invoice ID',
+              'Transaction ID',
+              'Customer',
+              'Plan',
+              'Amount',
+              'Method',
+              'Paid At',
+              'Status',
+              'Actions',
+            ]}
+          >
+            {filteredRows.map((row) => (
+              <tr key={row.invoiceId} className="hover:bg-slate-50">
+                <td className="px-5 py-4 font-bold text-slate-700">{row.invoiceId}</td>
+                <td className="px-5 py-4 font-semibold text-slate-700">
+                  {row.transactionId}
+                </td>
+                <td className="px-5 py-4">{row.customer}</td>
+                <td className="px-5 py-4 font-semibold text-slate-800">{row.plan}</td>
+                <td className="px-5 py-4 font-bold text-slate-950">{row.amount}</td>
+                <td className="px-5 py-4">{row.method}</td>
+                <td className="px-5 py-4">{row.paidAt}</td>
+                <td className="px-5 py-4">
+                  <AdminBadge status={row.status} />
+                </td>
+                <td className="px-5 py-4">
+                  <button
+                    onClick={() => setSelectedRow(row)}
+                    className="text-xs font-bold text-[#0b6fb8] hover:underline"
+                  >
+                    Detail
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </AdminTable>
         </AdminSectionCard>
 
         <AdminSectionCard title="Plan Management" subtitle="Manage subscription plan pricing">
@@ -286,62 +263,6 @@ const AdminRevenuePage = () => {
         </AdminSectionCard>
       </div>
 
-      <AdminSectionCard
-        title="Recent Payment Transactions"
-        subtitle="Subscription plan purchases and gateway callbacks"
-        action={
-          <select
-            value={statusFilter}
-            onChange={(event) =>
-              setStatusFilter(event.target.value as 'ALL' | RevenueRow['status'])
-            }
-            className="rounded-md border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600"
-          >
-            <option value="ALL">All Status</option>
-            <option value="SUCCESS">Success</option>
-            <option value="PENDING">Pending</option>
-            <option value="FAILED">Failed</option>
-          </select>
-        }
-      >
-        <AdminTable
-          headers={[
-            'Invoice ID',
-            'Transaction ID',
-            'Customer',
-            'Plan',
-            'Amount',
-            'Method',
-            'Paid At',
-            'Status',
-            'Actions',
-          ]}
-        >
-          {filteredRows.map((row) => (
-            <tr key={row.invoiceId} className="hover:bg-slate-50">
-              <td className="px-5 py-4 font-bold text-slate-700">{row.invoiceId}</td>
-              <td className="px-5 py-4 font-semibold text-slate-700">{row.transactionId}</td>
-              <td className="px-5 py-4">{row.customer}</td>
-              <td className="px-5 py-4 font-semibold text-slate-800">{row.plan}</td>
-              <td className="px-5 py-4 font-bold text-slate-950">{row.amount}</td>
-              <td className="px-5 py-4">{row.method}</td>
-              <td className="px-5 py-4">{row.paidAt}</td>
-              <td className="px-5 py-4">
-                <AdminBadge status={row.status} />
-              </td>
-              <td className="px-5 py-4">
-                <button
-                  onClick={() => setSelectedRow(row)}
-                  className="text-xs font-bold text-[#0b6fb8] hover:underline"
-                >
-                  Detail
-                </button>
-              </td>
-            </tr>
-          ))}
-        </AdminTable>
-      </AdminSectionCard>
-
       <AdminModal
         open={Boolean(selectedRow)}
         title="Transaction Detail"
@@ -354,7 +275,8 @@ const AdminRevenuePage = () => {
               <span className="font-bold">Invoice:</span> {selectedRow.invoiceId}
             </p>
             <p>
-              <span className="font-bold">Transaction ID:</span> {selectedRow.transactionId}
+              <span className="font-bold">Transaction ID:</span>{' '}
+              {selectedRow.transactionId}
             </p>
             <p>
               <span className="font-bold">Customer:</span> {selectedRow.customer}
@@ -372,7 +294,8 @@ const AdminRevenuePage = () => {
               <span className="font-bold">Paid At:</span> {selectedRow.paidAt}
             </p>
             <p className="sm:col-span-2">
-              <span className="font-bold">Status:</span> <AdminBadge status={selectedRow.status} />
+              <span className="font-bold">Status:</span>{' '}
+              <AdminBadge status={selectedRow.status} />
             </p>
           </div>
         )}

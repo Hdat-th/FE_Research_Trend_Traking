@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AdminModal from '../../components/admin/AdminModal';
+import AdminBadge from '../../components/admin/AdminBadge';
 import AdminSectionCard from '../../components/admin/AdminSectionCard';
 import AdminTable from '../../components/admin/AdminTable';
 import AdminToast from '../../components/admin/AdminToast';
@@ -82,6 +83,21 @@ const AdminRepositoryPage = () => {
     setKeywordDescription('');
     setShowKeywordModal(false);
     setToast('New keyword created.');
+  };
+
+  const toggleKeywordStatus = (keywordId: string) => {
+    setKeywords((current) =>
+      current.map((keyword) =>
+        keyword.id === keywordId
+          ? {
+            ...keyword,
+            status: keyword.status === 'DISMISSED' ? 'ACTIVE' : 'DISMISSED',
+          }
+          : keyword,
+      ),
+    );
+
+    setToast('Keyword status updated.');
   };
 
   return (
@@ -198,15 +214,15 @@ const AdminRepositoryPage = () => {
           action={
             <button
               onClick={() => setShowKeywordModal(true)}
-              className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white"
+              className="rounded-md bg-[#4338ca] px-4 py-2 text-xs font-bold text-white"
             >
               + New Keyword
             </button>
           }
         >
-          <AdminTable headers={['Keyword ID', 'Keyword Name', 'Description', 'Related Papers']}>
+          <AdminTable headers={['Keyword ID', 'Keyword Name', 'Description', 'Related Papers', 'Status', 'Actions']}>
             {keywords.map((keyword) => (
-              <tr key={keyword.id} className="hover:bg-slate-50">
+              <tr key={keyword.id} className={`hover:bg-slate-50 ${keyword.status === 'DISMISSED' ? 'opacity-50' : ''}`} >
                 <td className="px-5 py-5 font-bold text-slate-500">{keyword.id}</td>
 
                 <td className="px-5 py-5">
@@ -221,6 +237,22 @@ const AdminRepositoryPage = () => {
                   <span className="rounded bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
                     {keyword.fields} Papers
                   </span>
+                </td>
+                <td className="px-5 py-5">
+                  <AdminBadge status={keyword.status} />
+                </td>
+
+                <td className="px-5 py-5">
+                  <button
+                    onClick={() => toggleKeywordStatus(keyword.id)}
+                    className={
+                      keyword.status === 'DISMISSED'
+                        ? 'text-xs font-bold text-emerald-700 hover:underline'
+                        : 'text-xs font-bold text-orange-700 hover:underline'
+                    }
+                  >
+                    {keyword.status === 'DISMISSED' ? 'Restore' : 'Disable'}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -244,7 +276,7 @@ const AdminRepositoryPage = () => {
 
             <button
               onClick={createKeyword}
-              className="rounded-md bg-[#062b4f] px-4 py-2 text-xs font-bold text-white"
+              className="rounded-md bg-[#4338ca] px-4 py-2 text-xs font-bold text-white"
             >
               Create Keyword
             </button>
