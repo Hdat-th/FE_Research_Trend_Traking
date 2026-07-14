@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import RequireAuth from './RequireAuth';
-import RequireAdmin from './RequireAdmin';
 
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
@@ -17,7 +16,14 @@ import TrendDashboardPage from '../pages/dashboard/TrendDashboardPage';
 import PricingPage from '../pages/billing/PricingPage';
 import CheckoutPage from '../pages/billing/CheckoutPage';
 import PaymentReturnPage from '../pages/billing/PaymentReturnPage';
+import AdminLayout from '../components/admin/AdminLayout';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminPipelinesPage from '../pages/admin/AdminPipelinesPage';
+import AdminRepositoryPage from '../pages/admin/AdminRepositoryPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
+import AdminRevenuePage from '../pages/admin/AdminRevenuePage';
+import AdminLogsPage from '../pages/admin/AdminLogsPage';
+import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
 
 const AppRoutes = () => {
   return (
@@ -48,11 +54,16 @@ const AppRoutes = () => {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment/return" element={<PaymentReturnPage />} />
+        </Route>
 
-          {/* FR-27/28: khu vực quản trị - chỉ role = ADMIN truy cập được */}
-          <Route element={<RequireAdmin />}>
-            <Route path="/admin" element={<AdminDashboardPage />} />
-          </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="pipelines" element={<AdminPipelinesPage />} />
+          <Route path="repository" element={<AdminRepositoryPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="revenue" element={<AdminRevenuePage />} />
+          <Route path="logs" element={<AdminLogsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
       </Route>
 
