@@ -62,7 +62,7 @@ const TrendDashboardPage = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
             Journal & Keywords · Trend Analytics Dashboard
@@ -73,7 +73,7 @@ const TrendDashboardPage = () => {
         <button
           disabled={!canExportCsv}
           title={!canExportCsv ? 'Nâng cấp Premium để xuất CSV' : undefined}
-          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium ${
+          className={`flex items-center gap-2 self-start rounded-md px-4 py-2 text-sm font-medium sm:self-auto ${
             canExportCsv
               ? 'bg-indigo-700 text-white hover:bg-indigo-800'
               : 'cursor-not-allowed bg-gray-200 text-gray-400'
@@ -84,7 +84,7 @@ const TrendDashboardPage = () => {
       </div>
 
       {/* Year filter */}
-      <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:gap-4">
         <span className="text-sm text-gray-600">Năm:</span>
         <select value={fromYear} onChange={e => setFromYear(Number(e.target.value))}
           className="rounded border border-gray-200 px-2 py-1 text-sm">
@@ -110,7 +110,7 @@ const TrendDashboardPage = () => {
                 <div key={kw.name} className="flex items-center gap-3">
                   <button
                     onClick={() => { setSeriesQuery(kw.name); }}
-                    className="w-40 truncate text-left text-xs font-medium text-indigo-700 hover:underline"
+                    className="w-24 truncate text-left text-xs font-medium text-indigo-700 hover:underline sm:w-40"
                   >
                     {kw.name}
                   </button>

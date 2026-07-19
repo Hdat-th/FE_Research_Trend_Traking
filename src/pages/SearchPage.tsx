@@ -134,9 +134,9 @@ const SearchPage = () => {
       </nav>
       <p className="text-xs text-gray-400">LS-01 · Search Screen (Standard)</p>
 
-      <div className="grid grid-cols-12 gap-6 items-start pt-1">
+      <div className="grid gap-6 items-start pt-1 lg:grid-cols-12">
         {/* Left sidebar — filters */}
-        <aside className="col-span-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <aside className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-3">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-sm font-semibold text-gray-800">Filter Results</h2>
             <button
@@ -194,15 +194,15 @@ const SearchPage = () => {
         </aside>
 
         {/* Main content */}
-        <section className="col-span-9 flex flex-col gap-5">
+        <section className="flex flex-col gap-5 lg:col-span-9">
           {/* Tabs */}
-          <div className="flex bg-gray-100 p-1 rounded-xl self-start gap-1">
+          <div className="flex flex-wrap bg-gray-100 p-1 rounded-xl self-start gap-1">
             {(['keyword', 'doi'] as Tab[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={[
-                  'px-5 py-2 rounded-lg text-sm font-medium transition-all',
+                  'px-3 py-2 rounded-lg text-sm font-medium transition-all sm:px-5',
                   activeTab === tab
                     ? 'bg-white text-indigo-800 shadow-sm'
                     : 'text-gray-500 hover:text-gray-800',
@@ -303,7 +303,7 @@ const SearchPage = () => {
           )}
 
           {/* Empty state */}
-          <div className="mt-6 border border-dashed border-gray-200 rounded-xl p-16 flex flex-col items-center text-center">
+          <div className="mt-6 border border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center text-center sm:p-16">
             <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
               <SparkleIcon className="w-8 h-8 text-indigo-800" />
             </div>

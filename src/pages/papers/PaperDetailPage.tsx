@@ -18,7 +18,7 @@ const PaperDetailPage = () => {
         {paper.journal} · {paper.year}
       </p>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         <span className="rounded-md border border-gray-200 px-3 py-1 text-xs text-gray-500">
           DOI: {paper.doi}
         </span>
@@ -42,7 +42,7 @@ const PaperDetailPage = () => {
 
       <hr className="my-4 border-gray-200" />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-gray-500">
           {/* BR-32: 1 nút duy nhất - vừa Bookmark, vừa đăng ký nhận NEW_CITATION */}
           Bookmarking this paper also subscribes you to "New Citation" notifications (FR-26).

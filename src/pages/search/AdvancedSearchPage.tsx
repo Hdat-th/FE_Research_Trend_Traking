@@ -62,7 +62,7 @@ const AdvancedSearchPage = () => {
           <h1 className="text-2xl font-bold text-gray-900">Advanced Research Discovery</h1>
         </div>
 
-        <div className="flex gap-2 border-b border-gray-200">
+        <div className="flex flex-wrap gap-2 border-b border-gray-200">
           {tabs.map(t => (
             <button
               key={t.id}

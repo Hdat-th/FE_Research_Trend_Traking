@@ -167,7 +167,7 @@ const ProfilePage = () => {
         {user.role !== Role.ADMIN && <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-800">Subscription</h3>
 
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
                 Current plan: <span className="font-semibold text-gray-900">{user.accessTier}</span>
@@ -185,14 +185,14 @@ const ProfilePage = () => {
             {user.accessTier === AccessTier.BASIC ? (
               <Link
                 to="/pricing"
-                className="rounded-md bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-800"
+                className="self-start rounded-md bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-800"
               >
                 Upgrade to Premium
               </Link>
             ) : (
               <button
                 onClick={downgradeToBasic}
-                className="rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="self-start rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 Cancel Subscription
               </button>
