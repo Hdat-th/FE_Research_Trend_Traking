@@ -40,10 +40,10 @@ const AdminDashboardPage = () => {
       <AdminToast message={toast} onClose={() => setToast(null)} />
 
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
           Admin Dashboard Overview
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-gray-500">
           Tổng quan số liệu bài báo, doanh thu và gói đăng ký của hệ thống.
         </p>
       </div>
@@ -90,10 +90,10 @@ const AdminDashboardPage = () => {
           <div className="p-6">
             <div className="mb-5 flex items-end justify-between">
               <div>
-                <p className="text-2xl font-extrabold text-slate-950">
+                <p className="text-2xl font-bold text-gray-900">
                   {formatArticles(publicationTrend.reduce((sum, item) => sum + item.value, 0))}
                 </p>
-                <p className="text-xs font-semibold text-slate-500">
+                <p className="text-xs font-semibold text-gray-500">
                   Publications in last 6 months
                 </p>
               </div>
@@ -103,24 +103,24 @@ const AdminDashboardPage = () => {
               </span>
             </div>
 
-            <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
+            <div className="flex h-64 items-end gap-4 rounded-xl bg-gray-50 p-5">
               {publicationTrend.map((item) => (
                 <div
                   key={item.month}
                   className="group relative flex flex-1 flex-col items-center gap-3"
                 >
                   <div
-                    className="w-full max-w-[76px] rounded-t-xl bg-[#160078] transition hover:opacity-80"
+                    className="w-full max-w-[76px] rounded-t-xl bg-indigo-800 transition hover:opacity-80"
                     style={{ height: `${Math.min(item.value / 4, 220)}px` }}
                   />
 
-                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
+                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
                     <p className="font-bold">{item.month}</p>
                     <p>{formatArticles(item.value)} publications</p>
                     <p className="text-emerald-300">{item.growth} vs previous month</p>
                   </div>
 
-                  <span className="text-xs font-semibold text-slate-500">
+                  <span className="text-xs font-semibold text-gray-500">
                     {item.month}
                   </span>
                 </div>
@@ -136,10 +136,10 @@ const AdminDashboardPage = () => {
           <div className="p-6">
             <div className="mb-5 flex items-end justify-between">
               <div>
-                <p className="text-2xl font-extrabold text-slate-950">
+                <p className="text-2xl font-bold text-gray-900">
                   {formatRevenue(revenueTrend.reduce((sum, item) => sum + item.value, 0))}
                 </p>
-                <p className="text-xs font-semibold text-slate-500">
+                <p className="text-xs font-semibold text-gray-500">
                   Revenue in last 6 months
                 </p>
               </div>
@@ -149,7 +149,7 @@ const AdminDashboardPage = () => {
               </span>
             </div>
 
-            <div className="flex h-64 items-end gap-4 rounded-xl bg-slate-50 p-5">
+            <div className="flex h-64 items-end gap-4 rounded-xl bg-gray-50 p-5">
               {revenueTrend.map((item) => (
                 <div
                   key={item.month}
@@ -160,13 +160,13 @@ const AdminDashboardPage = () => {
                     style={{ height: `${Math.min(item.value * 7, 220)}px` }}
                   />
 
-                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
+                  <div className="pointer-events-none absolute bottom-16 z-10 hidden rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
                     <p className="font-bold">{item.month}</p>
                     <p>{formatRevenue(item.value)} revenue</p>
                     <p className="text-emerald-300">{item.growth} vs previous month</p>
                   </div>
 
-                  <span className="text-xs font-semibold text-slate-500">
+                  <span className="text-xs font-semibold text-gray-500">
                     {item.month}
                   </span>
                 </div>
@@ -181,51 +181,51 @@ const AdminDashboardPage = () => {
         subtitle="User account distribution by access level"
       >
         <div className="grid gap-6 p-6 md:grid-cols-[220px_1fr]">
-          <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-[conic-gradient(#160078_0_67%,#10b981_67%_99%,#fb923c_99%_100%)]">
+          <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-[conic-gradient(theme(colors.indigo.800)_0_67%,theme(colors.emerald.500)_67%_99%,theme(colors.orange.400)_99%_100%)]">
             <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner">
-              <span className="text-2xl font-extrabold text-slate-950">
+              <span className="text-2xl font-bold text-gray-900">
                 {userOverview.totalUsers.toLocaleString()}
               </span>
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs font-semibold text-gray-500">
                 Total Users
               </span>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-              <span className="font-semibold text-slate-700">Total Users</span>
-              <span className="font-extrabold text-slate-950">
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+              <span className="font-semibold text-gray-700">Total Users</span>
+              <span className="font-bold text-gray-900">
                 {userOverview.totalUsers.toLocaleString()}
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-              <span className="flex items-center gap-2 font-semibold text-slate-700">
-                <span className="h-3 w-3 rounded-full bg-[#160078]" />
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-gray-700">
+                <span className="h-3 w-3 rounded-full bg-indigo-800" />
                 Premium
               </span>
-              <span className="font-extrabold text-slate-950">
+              <span className="font-bold text-gray-900">
                 {userOverview.premiumUsers.toLocaleString()}
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-              <span className="flex items-center gap-2 font-semibold text-slate-700">
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-gray-700">
                 <span className="h-3 w-3 rounded-full bg-emerald-500" />
                 Free
               </span>
-              <span className="font-extrabold text-slate-950">
+              <span className="font-bold text-gray-900">
                 {userOverview.freeUsers.toLocaleString()}
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-              <span className="flex items-center gap-2 font-semibold text-slate-700">
+            <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+              <span className="flex items-center gap-2 font-semibold text-gray-700">
                 <span className="h-3 w-3 rounded-full bg-orange-400" />
                 Admin
               </span>
-              <span className="font-extrabold text-slate-950">
+              <span className="font-bold text-gray-900">
                 {userOverview.adminUsers}
               </span>
             </div>
@@ -243,8 +243,8 @@ const AdminDashboardPage = () => {
               <span>Premium Monthly</span>
               <span>70%</span>
             </div>
-            <div className="h-3 rounded-full bg-slate-100">
-              <div className="h-3 rounded-full bg-[#160078]" style={{ width: '70%' }} />
+            <div className="h-3 rounded-full bg-gray-100">
+              <div className="h-3 rounded-full bg-indigo-800" style={{ width: '70%' }} />
             </div>
           </div>
 
@@ -253,7 +253,7 @@ const AdminDashboardPage = () => {
               <span>Premium Yearly</span>
               <span>20%</span>
             </div>
-            <div className="h-3 rounded-full bg-slate-100">
+            <div className="h-3 rounded-full bg-gray-100">
               <div className="h-3 rounded-full bg-emerald-500" style={{ width: '20%' }} />
             </div>
           </div>
@@ -263,7 +263,7 @@ const AdminDashboardPage = () => {
               <span>Free Users</span>
               <span>10%</span>
             </div>
-            <div className="h-3 rounded-full bg-slate-100">
+            <div className="h-3 rounded-full bg-gray-100">
               <div className="h-3 rounded-full bg-orange-400" style={{ width: '10%' }} />
             </div>
           </div>

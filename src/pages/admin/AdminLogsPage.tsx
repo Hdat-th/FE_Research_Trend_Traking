@@ -61,8 +61,8 @@ const AdminLogsPage = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">Activity Logs</h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Activity Logs</h1>
+        <p className="mt-1 text-xs text-gray-500">
           Track admin actions and system events across the platform.
         </p>
       </div>
@@ -81,7 +81,7 @@ const AdminLogsPage = () => {
           <select
             value={filter}
             onChange={(event) => setFilter(event.target.value as 'ALL' | LogStatus)}
-            className="rounded-md border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600"
+            className="rounded-md border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600"
           >
             <option value="ALL">All Status</option>
             <option value="SUCCESS">Success</option>
@@ -92,12 +92,12 @@ const AdminLogsPage = () => {
       >
         <AdminTable headers={['Log ID', 'Time', 'Actor', 'Action', 'Module', 'Status']}>
           {filteredLogs.map((log) => (
-            <tr key={log.id} className="hover:bg-slate-50">
-              <td className="px-5 py-4 font-bold text-slate-700">{log.id}</td>
-              <td className="px-5 py-4 text-slate-600">{log.time}</td>
+            <tr key={log.id} className="hover:bg-gray-50">
+              <td className="px-5 py-4 font-bold text-gray-700">{log.id}</td>
+              <td className="px-5 py-4 text-gray-600">{log.time}</td>
               <td className="px-5 py-4 font-semibold">{log.actor}</td>
               <td className="px-5 py-4">{log.action}</td>
-              <td className="px-5 py-4 font-semibold text-slate-700">{log.module}</td>
+              <td className="px-5 py-4 font-semibold text-gray-700">{log.module}</td>
               <td className="px-5 py-4">
                 <AdminBadge status={log.status} />
               </td>
